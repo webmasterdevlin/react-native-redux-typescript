@@ -2,12 +2,14 @@ import React, {Component} from 'react';
 import {Text} from 'react-native';
 
 interface IProps {
+  age: string;
 }
 
-interface IState {
-}
+type IState = {
+  name: string;
+};
 
-class FoodListClass extends Component {
+class FoodListClass extends Component<IProps, IState> {
   // Old useState()
   state = {
     name: '', // default value
@@ -18,7 +20,9 @@ class FoodListClass extends Component {
   };
 
   // Old useEffect
-  componentDidMount() {}
+  componentDidMount() {
+    const a = this.props.age;
+  }
 
   render() {
     return <Text></Text>;

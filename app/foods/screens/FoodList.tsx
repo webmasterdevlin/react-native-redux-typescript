@@ -1,44 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, RefreshControl} from 'react-native';
-import {
-  Container,
-  Footer,
-  Content,
-  View,
-  Text,
-  Button,
-  Item,
-  Icon,
-  Label,
-  Input,
-  Spinner,
-  List,
-  ListItem,
-} from 'native-base';
-import {useNavigation} from 'react-navigation-hooks';
-import {useSelector, useDispatch} from 'react-redux';
-import {fetchFoods, removeFood, updateFood, addFood} from '../food-actions';
-import {IFoodModel} from '../food-types';
 import {Dispatch} from 'redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {fetchFoods, removeFood, addFood, updateFood} from '../food-actions';
+import {View, StyleSheet} from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  TextInput,
+  Divider,
+  Title,
+} from 'react-native-paper';
+import {IFoodModel} from '../food-types';
 import {IApplicationState} from '../../store';
 
-const FoodList: React.FC<void> = () => {
-  /* React Navigation */
-  const {navigate} = useNavigation();
-
-  /* Redux*/
+const FoodList: React.FC<any> = props => {
+  /* part of Redux pattern */
   const dispatch: Dispatch = useDispatch();
   const {foods, isLoading} = useSelector(
     (state: IApplicationState) => state.foodReducer,
   );
 
   /* React Hooks */
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [food, setFood] = useState<IFoodModel>({} as IFoodModel); // The new todo that will be sent to the web API
-  const [forEditing, setForEditing] = useState<string>('0'); // For tracking which todo should be edited
+  const [food, setFood] = useState<IFoodModel>({} as IFoodModel); // The new food that will be sent to the web API
+  const [forEditing, setForEditing] = useState<string>('0'); // For tracking which food should be edited
   const [foodToUpdate, setFoodToUpdate] = useState<IFoodModel>(
     {} as IFoodModel,
-  ); // the todo you've picked to edit
+  ); // the food you've picked to edit
 
   useEffect(() => {
     dispatch(fetchFoods());
@@ -46,7 +33,7 @@ const FoodList: React.FC<void> = () => {
 
   const handleInputOnChange = (input: string) => {
     // To edit input
-    const newFood: IFoodModel = {...food};
+    const newFood = {...food};
     newFood.name = input;
     setFood(newFood);
   };
@@ -73,123 +60,94 @@ const FoodList: React.FC<void> = () => {
   };
 
   return (
-    <Container style={{backgroundColor: '#EAF2F5'}}>
-      <View style={{marginLeft: 20, marginRight: 20}}>
-        <Item floatingLabel>
-          <Label>what's new</Label>
-          <Input onChangeText={handleInputOnChange} />
-        </Item>
-        <Button success full onPress={() => handleSaveOnPress()}>
-          <Text>Save</Text>
+    <View style={styles.container}>
+      <View style={{marginBottom: 20}}>
+        <TextInput onChangeText={handleInputOnChange} label="what's new?" />
+        <Button mode="contained" onPress={() => handleSaveOnPress()}>
+          Save
         </Button>
+        <Divider />
       </View>
-      <Content
-        //@ts-ignore
-        scrollEnable
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => {
-              setIsRefreshing(true);
-              try {
-                dispatch(fetchFoods());
-              } catch (e) {
-              } finally {
-                setIsRefreshing(false);
-              }
-            }}
-            title="Loading..."
-          />
-        }
-        style={{margin: 20}}>
-        <List>
-          {isLoading ? (
-            <Spinner color="blue" />
-          ) : (
-            foods.map((f: IFoodModel) => (
-              <ListItem
-                key={f.id}
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
+      <View style={styles.list}>
+        {isLoading ? (
+          <View style={styles.loaderBase}>
+            <ActivityIndicator animating size="large" />
+          </View>
+        ) : (
+          foods.map((f: IFoodModel) => (
+            <View key={f.id} style={styles.cell}>
+              {forEditing === f.id ? (
+                <TextInput
+                  style={styles.input}
+                  mode="outlined"
+                  multiline={true}
+                  value={foodToUpdate.name}
+                  onChangeText={handleEditOnChange}
+                />
+              ) : (
+                <Title>{f.name}</Title>
+              )}
+              <View style={{flexDirection: 'row'}}>
                 {forEditing === f.id ? (
-                  <Input
-                    value={foodToUpdate.name}
-                    onChangeText={handleEditOnChange}
-                  />
+                  <View style={{flexDirection: 'row'}}>
+                    <Button onPress={() => setForEditing('0')}>Cancel</Button>
+                    <Button onPress={() => handleUpdateOnPress()}>
+                      Update
+                    </Button>
+                  </View>
                 ) : (
-                  <Text style={{fontSize: 24}}>{f.name}</Text>
+                  <View style={{flexDirection: 'row'}}>
+                    <Button icon="pencil" onPress={() => handleEditOnPress(f)}>
+                      {' '}
+                    </Button>
+                    <Button
+                      icon="information"
+                      onPress={() =>
+                        props.navigation.navigate('foodDetail', {obj: f})
+                      }>
+                      {' '}
+                    </Button>
+                    <Button
+                      icon="delete"
+                      onPress={() => dispatch(removeFood(f.id))}>
+                      {' '}
+                    </Button>
+                  </View>
                 )}
-                <View style={{flex: 0, flexDirection: 'row'}}>
-                  {forEditing === f.id ? (
-                    <View style={{flex: 0, flexDirection: 'row'}}>
-                      <Button
-                        style={{marginRight: 5}}
-                        info
-                        onPress={() => setForEditing('0')}>
-                        <Text>Cancel</Text>
-                      </Button>
-                      <Button light onPress={() => handleUpdateOnPress()}>
-                        <Text>Update</Text>
-                      </Button>
-                    </View>
-                  ) : (
-                    <View style={{flex: 0, flexDirection: 'row'}}>
-                      <Button
-                        style={{marginRight: 5}}
-                        warning
-                        onPress={() => handleEditOnPress(f)}>
-                        <Icon type="FontAwesome5" name="pen" />
-                      </Button>
-                      <Button
-                        style={{marginRight: 5}}
-                        primary
-                        onPress={() => navigate('foodDetail', {id: f})}>
-                        <Icon type="FontAwesome5" name="info-circle" />
-                      </Button>
-                      <Button danger onPress={() => dispatch(removeFood(f.id))}>
-                        <Icon type="FontAwesome5" name="trash" />
-                      </Button>
-                    </View>
-                  )}
-                </View>
-              </ListItem>
-            ))
-          )}
-        </List>
-      </Content>
-      <Footer style={styles.footer}>
-        <Text style={styles.footerText} note>
-          Footer
-        </Text>
-      </Footer>
-    </Container>
+              </View>
+            </View>
+          ))
+        )}
+      </View>
+    </View>
   );
 };
-export default FoodList;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
-    padding: 20,
+    margin: 20,
+  },
+  loaderBase: {
+    flex: 1,
+    margin: 10,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    width: '40%',
+    fontSize: 20,
+  },
+  list: {
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   cell: {
-    flex: 1,
+    flex: 0,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  footer: {
-    backgroundColor: '#9C27B0',
-    alignItems: 'center',
-  },
-  footerText: {
-    color: 'white',
-    fontSize: 32,
+    marginBottom: 20,
   },
 });
+export default FoodList;

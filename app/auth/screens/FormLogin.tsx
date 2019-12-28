@@ -1,63 +1,86 @@
 import React from 'react';
-import {useNavigation} from 'react-navigation-hooks';
+import {View, StyleSheet, StatusBar} from 'react-native';
+import {Headline, Paragraph, TextInput, Button} from 'react-native-paper';
 
-import {
-  Container,
-  Button,
-  Text,
-  Item as FormItem,
-  Input,
-  Label,
-  View,
-} from 'native-base';
-
-const FormLogin: React.FC<void> = () => {
-  const {navigate} = useNavigation();
+const FormLogin: React.FC<any> = props => {
   return (
-    <Container style={{margin: 20}}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}>
-        <View>
-          <Text style={{textAlign: 'center'}}>LOGO</Text>
-        </View>
+    <View style={styles.base}>
+      <>
+        <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      </>
 
-        <View style={{margin: 30}}>
-          <FormItem floatingLabel>
-            <Label>Email</Label>
-            <Input />
-          </FormItem>
-          <FormItem floatingLabel style={{marginBottom: 50}}>
-            <Label>Password</Label>
-            <Input secureTextEntry={true} />
-          </FormItem>
-          <Button
-            full
-            rounded
-            primary
-            onPress={() => {
-              navigate('todoList');
-            }}>
-            <Text>Todos</Text>
-          </Button>
-          <View style={{marginTop: 10}} />
-          <Button
-            // @ts-ignore
-            secondary
-            full
-            rounded
-            bordered
-            onPress={() => {
-              navigate('foodList');
-            }}>
-            <Text>Foods</Text>
-          </Button>
-        </View>
+      <View style={styles.header}>
+        <Headline style={styles.appTitle}>TodoApp</Headline>
+        <Paragraph style={styles.appDesc}>
+          Inmeta React Native Course.
+        </Paragraph>
       </View>
-    </Container>
+
+      <>
+        <View style={styles.divider} />
+        <TextInput onChange={() => {}} label="*Username or email" />
+      </>
+
+      <>
+        <View style={styles.divider} />
+        <TextInput onChange={() => {}} label="*Password" secureTextEntry />
+      </>
+
+      <>
+        <View style={styles.divider} />
+        <Button
+          disabled={false}
+          style={styles.btn}
+          mode="contained"
+          onPress={() => props.navigation.navigate('todoList')}>
+          Todo
+        </Button>
+
+        <Button
+          disabled={false}
+          style={styles.btn}
+          mode="outlined"
+          onPress={() => props.navigation.navigate('foodList')}>
+          Food
+        </Button>
+        <View style={styles.divider} />
+        <View style={styles.divider} />
+      </>
+    </View>
   );
 };
 export default FormLogin;
+
+const styles = StyleSheet.create({
+  base: {
+    flex: 1,
+    paddingLeft: 16,
+    paddingRight: 16,
+    alignContent: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+  divider: {
+    height: 16,
+  },
+  headline: {
+    fontSize: 30,
+  },
+  appDesc: {
+    textAlign: 'center',
+  },
+  header: {
+    padding: 32,
+  },
+  appTitle: {
+    textAlign: 'center',
+    fontSize: 35,
+    lineHeight: 35,
+    fontWeight: '700',
+  },
+  btn: {
+    height: 50,
+    paddingTop: 6,
+    marginBottom: 12,
+  },
+});

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {BaseUrl} from '../api-config';
-import {ITodoModel} from "./todo-types";
+import {ITodoModel} from './todo-types';
 
 export async function getTodos() {
   return await axios.get(BaseUrl.todos);
@@ -11,7 +11,6 @@ export async function deleteTodo(id: string) {
 }
 
 export async function postTodo(newTodo: ITodoModel) {
-  debugger
   return await axios.post(BaseUrl.todos, newTodo);
 }
 
