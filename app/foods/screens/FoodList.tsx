@@ -12,8 +12,17 @@ import {
 } from 'react-native-paper';
 import {IFoodModel} from '../food-types';
 import {IApplicationState} from '../../store';
+import {NavigationStackProp} from 'react-navigation-stack';
 
-const FoodList: React.FC<any> = props => {
+/* For deep components */
+// import {useNavigation} from 'react-navigation-hooks'; React Navigation v4
+// import {useNavigation} from '@react-navigation/native'; React Navigation v5
+
+interface IProps {
+  navigation: NavigationStackProp;
+}
+
+const FoodList: React.FC<IProps> = props => {
   /* part of Redux pattern */
   const dispatch: Dispatch = useDispatch();
   const {foods, isLoading} = useSelector(
@@ -21,7 +30,9 @@ const FoodList: React.FC<any> = props => {
   );
 
   /* React Hooks */
-  const [food, setFood] = useState<IFoodModel>({} as IFoodModel); // The new food that will be sent to the web API
+  const [food, setFood] = useState<IFoodModel>({
+    name: '',
+  } as IFoodModel); // The new food that will be sent to the web API
   const [forEditing, setForEditing] = useState<string>('0'); // For tracking which food should be edited
   const [foodToUpdate, setFoodToUpdate] = useState<IFoodModel>(
     {} as IFoodModel,
@@ -53,6 +64,7 @@ const FoodList: React.FC<any> = props => {
 
   const handleSaveOnPress = () => {
     dispatch(addFood(food));
+    setFood({name: '', id: ''});
   };
 
   const handleUpdateOnPress = () => {
@@ -62,7 +74,11 @@ const FoodList: React.FC<any> = props => {
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 20}}>
-        <TextInput onChangeText={handleInputOnChange} label="what's new?" />
+        <TextInput
+          onChangeText={handleInputOnChange}
+          value={food.name}
+          label="what's new?"
+        />
         <Button mode="contained" onPress={() => handleSaveOnPress()}>
           Save
         </Button>
@@ -74,7 +90,7 @@ const FoodList: React.FC<any> = props => {
             <ActivityIndicator animating size="large" />
           </View>
         ) : (
-          foods.map((f: IFoodModel) => (
+          foods.map(f => (
             <View key={f.id} style={styles.cell}>
               {forEditing === f.id ? (
                 <TextInput

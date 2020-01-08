@@ -1,7 +1,12 @@
 import React from 'react';
 import {Text} from 'react-native-paper';
+import {NavigationStackProp} from 'react-navigation-stack';
 
-const FoodDetail: React.FC<void> = (props: any) => (
+interface IProps {
+  navigation: NavigationStackProp;
+}
+
+const FoodDetail: React.FC<IProps> = props => (
   <Text style={{fontSize: 40}}>{props.navigation.getParam('obj').name}</Text>
 );
 

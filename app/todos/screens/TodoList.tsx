@@ -12,8 +12,17 @@ import {
 } from 'react-native-paper';
 import {ITodoModel} from '../todo-types';
 import {IApplicationState} from '../../store';
+import {NavigationStackProp} from 'react-navigation-stack';
 
-const TodoList: React.FC<any> = props => {
+/* For deep components */
+// import {useNavigation} from 'react-navigation-hooks'; React Navigation v4
+// import {useNavigation} from '@react-navigation/native'; React Navigation v5
+
+type Props = {
+  navigation: NavigationStackProp;
+};
+
+const TodoList: React.FC<Props> = props => {
   /* part of Redux pattern */
   const dispatch: Dispatch = useDispatch();
   const {todos, isLoading} = useSelector(
@@ -21,7 +30,7 @@ const TodoList: React.FC<any> = props => {
   );
 
   /* React Hooks */
-  const [todo, setTodo] = useState<ITodoModel>({} as ITodoModel); // The new todo that will be sent to the web API
+  const [todo, setTodo] = useState<ITodoModel>({title: ''} as ITodoModel); // The new todo that will be sent to the web API
   const [forEditing, setForEditing] = useState<string>('0'); // For tracking which todo should be edited
   const [todoToUpdate, setTodoToUpdate] = useState<ITodoModel>(
     {} as ITodoModel,
@@ -53,6 +62,7 @@ const TodoList: React.FC<any> = props => {
 
   const handleSaveOnPress = () => {
     dispatch(addTodo(todo));
+    setTodo({title: ''} as ITodoModel);
   };
 
   const handleUpdateOnPress = () => {
@@ -62,7 +72,11 @@ const TodoList: React.FC<any> = props => {
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 20}}>
-        <TextInput onChangeText={handleInputOnChange} label="what's new?" />
+        <TextInput
+          onChangeText={handleInputOnChange}
+          value={todo.title}
+          label="what's new?"
+        />
         <Button mode="contained" onPress={() => handleSaveOnPress()}>
           Save
         </Button>
@@ -74,7 +88,7 @@ const TodoList: React.FC<any> = props => {
             <ActivityIndicator animating size="large" />
           </View>
         ) : (
-          todos.map((t: ITodoModel) => (
+          todos.map(t => (
             <View key={t.id} style={styles.cell}>
               {forEditing === t.id ? (
                 <TextInput
