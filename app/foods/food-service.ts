@@ -1,19 +1,18 @@
-import axios from 'axios';
-import {BaseUrl} from '../api-config';
-import {IFoodModel} from "./food-types";
+import {api} from '../api-config';
+import {IFoodModel} from './food-types';
 
 export async function getFoods() {
-  return await axios.get(BaseUrl.foods);
+  return await api.get('foods');
 }
 
 export async function deleteFood(id: string) {
-  return await axios.delete(`${BaseUrl.foods}${id}`);
+  return await api.delete('foods/' + id);
 }
 
 export async function postFood(newFood: IFoodModel) {
-  return await axios.post(BaseUrl.foods, newFood);
+  return await api.post('foods', newFood);
 }
 
 export async function putFood(updateFood: IFoodModel) {
-  return await axios.put(`${BaseUrl.foods}${updateFood.id}`, updateFood);
+  return await api.put(`foods/${updateFood.id}`, updateFood);
 }
