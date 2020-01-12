@@ -112,19 +112,17 @@ const TodoList: React.FC<Props> = props => {
                 ) : (
                   <View style={{flexDirection: 'row'}}>
                     <Button icon="pencil" onPress={() => handleEditOnPress(t)}>
-                      {' '}
+
                     </Button>
                     <Button
                       icon="information"
                       onPress={() =>
                         props.navigation.navigate('todoDetail', {obj: t})
                       }>
-                      {' '}
                     </Button>
                     <Button
                       icon="delete"
                       onPress={() => dispatch(removeTodo(t.id))}>
-                      {' '}
                     </Button>
                   </View>
                 )}
