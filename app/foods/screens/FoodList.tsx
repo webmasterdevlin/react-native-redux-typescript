@@ -13,6 +13,7 @@ import {
 import {IFoodModel} from '../food-types';
 import {IApplicationState} from '../../store';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {Formik} from 'formik';
 
 /* For deep components */
 // import {useNavigation} from 'react-navigation-hooks'; React Navigation v4
@@ -22,6 +23,7 @@ interface IProps {
   navigation: NavigationStackProp;
 }
 
+/* Using Formik*/
 const FoodList: React.FC<IProps> = props => {
   /* part of Redux pattern */
   const dispatch: Dispatch = useDispatch();
@@ -34,54 +36,35 @@ const FoodList: React.FC<IProps> = props => {
     name: '',
   } as IFoodModel); // The new food that will be sent to the web API
   const [forEditing, setForEditing] = useState<string>('0'); // For tracking which food should be edited
-  const [foodToUpdate, setFoodToUpdate] = useState<IFoodModel>(
-    {} as IFoodModel,
-  ); // the food you've picked to edit
 
   useEffect(() => {
     dispatch(fetchFoods());
   }, []);
 
-  const handleInputOnChange = (input: string) => {
-    // To edit input
-    const newFood = {...food};
-    newFood.name = input;
-    setFood(newFood);
-  };
-
-  const handleEditOnChange = (input: string) => {
-    // To edit input
-    const updatedFood: IFoodModel = {...foodToUpdate};
-    updatedFood.name = input;
-    setFoodToUpdate(updatedFood);
-  };
-
-  const handleEditOnPress = (food: IFoodModel) => {
-    // For setup. No form submission here.
-    setForEditing(food.id);
-    setFoodToUpdate(food);
-  };
-
-  const handleSaveOnPress = () => {
-    dispatch(addFood(food));
-    setFood({name: '', id: ''});
-  };
-
-  const handleUpdateOnPress = () => {
-    dispatch(updateFood(foodToUpdate));
-  };
-
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 20}}>
-        <TextInput
-          onChangeText={handleInputOnChange}
-          value={food.name}
-          label="what's new?"
-        />
-        <Button mode="contained" onPress={() => handleSaveOnPress()}>
-          Save
-        </Button>
+        <Formik
+          initialValues={food}
+          onSubmit={(values, actions) => {
+            dispatch(addFood(values));
+            actions.resetForm();
+          }}>
+          {formikProps => (
+            <View>
+              <TextInput
+                onChangeText={formikProps.handleChange('name')}
+                onBlur={formikProps.handleBlur('name')}
+                value={formikProps.values.name}
+                label="what's new?"
+              />
+              <Button mode="contained" onPress={formikProps.handleSubmit}>
+                Save
+              </Button>
+            </View>
+          )}
+        </Formik>
+
         <Divider />
       </View>
       <View style={styles.list}>
@@ -91,47 +74,61 @@ const FoodList: React.FC<IProps> = props => {
           </View>
         ) : (
           foods.map(f => (
-            <View key={f.id} style={styles.cell}>
-              {forEditing === f.id ? (
-                <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  multiline={true}
-                  value={foodToUpdate.name}
-                  onChangeText={handleEditOnChange}
-                />
-              ) : (
-                <Title>{f.name}</Title>
+            <Formik
+              key={f.id}
+              initialValues={f}
+              onSubmit={(values, actions) => {
+                dispatch(updateFood(values));
+              }}>
+              {formikProps => (
+                <View style={styles.cell}>
+                  {forEditing === f.id ? (
+                    <TextInput
+                      style={styles.input}
+                      mode="outlined"
+                      multiline={true}
+                      value={formikProps.values.name}
+                      onChangeText={formikProps.handleChange('name')}
+                      onBlur={formikProps.handleBlur('name')}
+                    />
+                  ) : (
+                    <Title>{f.name}</Title>
+                  )}
+                  <View style={{flexDirection: 'row'}}>
+                    {forEditing === f.id ? (
+                      <View style={{flexDirection: 'row'}}>
+                        <Button onPress={() => setForEditing('0')}>
+                          Cancel
+                        </Button>
+                        <Button onPress={formikProps.handleSubmit}>
+                          Update
+                        </Button>
+                      </View>
+                    ) : (
+                      <View style={{flexDirection: 'row'}}>
+                        <Button
+                          icon="pencil"
+                          onPress={() => setForEditing(f.id)}>
+                          {' '}
+                        </Button>
+                        <Button
+                          icon="information"
+                          onPress={() =>
+                            props.navigation.navigate('foodDetail', {obj: f})
+                          }>
+                          {' '}
+                        </Button>
+                        <Button
+                          icon="delete"
+                          onPress={() => dispatch(removeFood(f.id))}>
+                          {' '}
+                        </Button>
+                      </View>
+                    )}
+                  </View>
+                </View>
               )}
-              <View style={{flexDirection: 'row'}}>
-                {forEditing === f.id ? (
-                  <View style={{flexDirection: 'row'}}>
-                    <Button onPress={() => setForEditing('0')}>Cancel</Button>
-                    <Button onPress={() => handleUpdateOnPress()}>
-                      Update
-                    </Button>
-                  </View>
-                ) : (
-                  <View style={{flexDirection: 'row'}}>
-                    <Button icon="pencil" onPress={() => handleEditOnPress(f)}>
-                      {' '}
-                    </Button>
-                    <Button
-                      icon="information"
-                      onPress={() =>
-                        props.navigation.navigate('foodDetail', {obj: f})
-                      }>
-                      {' '}
-                    </Button>
-                    <Button
-                      icon="delete"
-                      onPress={() => dispatch(removeFood(f.id))}>
-                      {' '}
-                    </Button>
-                  </View>
-                )}
-              </View>
-            </View>
+            </Formik>
           ))
         )}
       </View>

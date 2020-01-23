@@ -15,6 +15,10 @@
     {
       "id": "e238435439dhedshou",
       "title": "play"
+    },
+    {
+      "title": "Cook",
+      "id": "U5VboDu"
     }
   ],
   "foods": [
@@ -32,11 +36,15 @@
     },
     {
       "id": "4yrt65y65ye",
-      "name": "gelato"
+      "name": "Gelatos"
     },
     {
       "name": "Pizza",
       "id": "DhByXqW"
+    },
+    {
+      "name": "Lefse",
+      "id": "p4K3ESL"
     }
   ]
 }
