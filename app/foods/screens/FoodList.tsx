@@ -15,7 +15,7 @@ import {IFoodModel} from '../food-types';
 import {IApplicationState} from '../../store';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Formik} from 'formik';
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 /* For deep components */
 // import {useNavigation} from 'react-navigation-hooks'; React Navigation v4
@@ -44,7 +44,10 @@ const FoodList: React.FC<IProps> = props => {
   }, []);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().label('Name').min(3, 'Name must have at least 4 characters').required()
+    name: Yup.string()
+      .label('Name')
+      .min(3, 'Name must have at least 4 characters')
+      .required(),
   });
 
   return (
@@ -52,6 +55,7 @@ const FoodList: React.FC<IProps> = props => {
       <View style={{marginBottom: 20}}>
         <Formik
           initialValues={food}
+          validationSchema={validationSchema}
           onSubmit={(values, actions) => {
             dispatch(addFood(values));
             actions.resetForm();
@@ -64,6 +68,7 @@ const FoodList: React.FC<IProps> = props => {
                 value={formikProps.values.name}
                 label="what's new?"
               />
+              <HelperText type={'error'}>{formikProps.errors.name}</HelperText>
               <Button mode="contained" onPress={formikProps.handleSubmit}>
                 Save
               </Button>
@@ -90,16 +95,17 @@ const FoodList: React.FC<IProps> = props => {
               {formikProps => (
                 <View style={styles.cell}>
                   {forEditing === f.id ? (
-                    <View>
+                    <View style={styles.input}>
                       <TextInput
-                          style={styles.input}
-                          mode="outlined"
-                          multiline={true}
-                          value={formikProps.values.name}
-                          onChangeText={formikProps.handleChange('name')}
-                          onBlur={formikProps.handleBlur('name')}
+                        mode="outlined"
+                        multiline={true}
+                        value={formikProps.values.name}
+                        onChangeText={formikProps.handleChange('name')}
+                        onBlur={formikProps.handleBlur('name')}
                       />
-                      <HelperText type={"error"}>{formikProps.errors.name}</HelperText>
+                      <HelperText type={'error'}>
+                        {formikProps.errors.name}
+                      </HelperText>
                     </View>
                   ) : (
                     <Title>{f.name}</Title>
