@@ -44,7 +44,7 @@ const FoodList: React.FC<IProps> = props => {
   }, []);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().label('name').min(3, 'Name must have at least 4 characters').required()
+    name: Yup.string().label('Name').min(3, 'Name must have at least 4 characters').required()
   });
 
   return (
