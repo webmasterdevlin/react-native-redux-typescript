@@ -8,12 +8,14 @@ import {
   Button,
   TextInput,
   Divider,
+  HelperText,
   Title,
 } from 'react-native-paper';
 import {IFoodModel} from '../food-types';
 import {IApplicationState} from '../../store';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Formik} from 'formik';
+import * as Yup from "yup";
 
 /* For deep components */
 // import {useNavigation} from 'react-navigation-hooks'; React Navigation v4
@@ -40,6 +42,10 @@ const FoodList: React.FC<IProps> = props => {
   useEffect(() => {
     dispatch(fetchFoods());
   }, []);
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().label('name').min(3, 'Name must have at least 4 characters').required()
+  });
 
   return (
     <View style={styles.container}>
@@ -77,20 +83,24 @@ const FoodList: React.FC<IProps> = props => {
             <Formik
               key={f.id}
               initialValues={f}
+              validationSchema={validationSchema}
               onSubmit={(values, actions) => {
                 dispatch(updateFood(values));
               }}>
               {formikProps => (
                 <View style={styles.cell}>
                   {forEditing === f.id ? (
-                    <TextInput
-                      style={styles.input}
-                      mode="outlined"
-                      multiline={true}
-                      value={formikProps.values.name}
-                      onChangeText={formikProps.handleChange('name')}
-                      onBlur={formikProps.handleBlur('name')}
-                    />
+                    <View>
+                      <TextInput
+                          style={styles.input}
+                          mode="outlined"
+                          multiline={true}
+                          value={formikProps.values.name}
+                          onChangeText={formikProps.handleChange('name')}
+                          onBlur={formikProps.handleBlur('name')}
+                      />
+                      <HelperText type={"error"}>{formikProps.errors.name}</HelperText>
+                    </View>
                   ) : (
                     <Title>{f.name}</Title>
                   )}
