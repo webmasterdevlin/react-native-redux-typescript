@@ -16,7 +16,7 @@ export default function RootNavigation() {
         <Stack.Screen
           name="formLogin"
           component={FormLogin}
-          options={{title: 'Form Login'}}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="todoDetail"
