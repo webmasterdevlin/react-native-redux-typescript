@@ -1,6 +1,7 @@
 import {getFoods, deleteFood, putFood, postFood} from './food-service';
-import {Dispatch, ActionCreator} from 'redux';
+import {Dispatch, ActionCreator, Action} from 'redux';
 import {IFoodModel, FoodActionTypes} from './food-types';
+import {ThunkAction, ThunkDispatch} from 'redux-thunk'; // Too verbose to use. Any is good enough
 
 /* action creators */
 export const fetchFoods: ActionCreator<any> = () => {
@@ -23,6 +24,7 @@ export const removeFood: ActionCreator<any> = (id: string) => {
     dispatch({
       type: FoodActionTypes.REMOVE_FOOD_REQUEST,
     });
+
     try {
       await deleteFood(id);
       dispatch({type: FoodActionTypes.REMOVE_FOOD_SUCCESS, payload: id});

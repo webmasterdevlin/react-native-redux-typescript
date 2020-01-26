@@ -2,6 +2,7 @@ import {put, takeEvery, call} from 'redux-saga/effects';
 import {all} from '@redux-saga/core/effects';
 import {getTodos, deleteTodo, postTodo, putTodo} from './todo-service';
 import {TodoActionTypes} from './todo-types';
+import {IAction} from './todo-actions';
 
 /*function generator implementations of Saga */
 function* fetchingTodos() {
@@ -9,7 +10,6 @@ function* fetchingTodos() {
     const {data} = yield call(getTodos); // saga
     yield put({type: TodoActionTypes.FETCH_TODOS_SUCCESS, payload: data});
   } catch (e) {
-    console.log(e.message);
     yield put({
       type: TodoActionTypes.FETCH_TODOS_FAIL,
       payload: e.message,
@@ -17,12 +17,11 @@ function* fetchingTodos() {
   }
 }
 
-function* removingTodo({payload: id}: any) {
+function* removingTodo({payload: id}: IAction) {
   try {
     yield call(deleteTodo, id);
     yield put({type: TodoActionTypes.REMOVE_TODO_SUCCESS, payload: id});
   } catch (e) {
-    console.log(e.message);
     yield put({
       type: TodoActionTypes.REMOVE_TODO_FAIL,
       payload: e.message,
@@ -30,17 +29,16 @@ function* removingTodo({payload: id}: any) {
   }
 }
 
-function* addingTodo({payload: newTodo}: any) {
+function* addingTodo({payload: newTodo}: IAction) {
   try {
     const {data} = yield call(postTodo, newTodo);
     yield put({type: TodoActionTypes.ADD_TODO_SUCCESS, payload: data});
   } catch (e) {
-    console.log(e.message);
     yield put({type: TodoActionTypes.ADD_TODO_FAIL, payload: e.message});
   }
 }
 
-function* updatingTodo({payload: updatedTodo}: any) {
+function* updatingTodo({payload: updatedTodo}: IAction) {
   try {
     yield call(putTodo, updatedTodo);
     yield put({
