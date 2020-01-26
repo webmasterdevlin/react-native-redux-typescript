@@ -91,6 +91,7 @@ const FoodList: React.FC<IProps> = props => {
               validationSchema={validationSchema}
               onSubmit={(values, actions) => {
                 dispatch(updateFood(values));
+                setForEditing('0');
               }}>
               {formikProps => (
                 <View style={styles.cell}>

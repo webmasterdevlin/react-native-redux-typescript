@@ -71,6 +71,7 @@ const TodoList: React.FC<Props> = props => {
 
   const handleUpdateOnPress = () => {
     dispatch(updateTodo(todoToUpdate));
+    setForEditing('0');
   };
 
   return (
