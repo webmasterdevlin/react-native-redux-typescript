@@ -13,7 +13,6 @@ const initialState: ITodoState = {
   },
   isLoading: false,
   error: '',
-  logo: 'Logo from store',
 };
 
 interface IAction {
@@ -21,7 +20,10 @@ interface IAction {
   payload: any;
 }
 
-export const todoReducer = (state: ITodoState = initialState, action: IAction): ITodoState => {
+export const todoReducer = (
+  state: ITodoState = initialState,
+  action: IAction,
+): ITodoState => {
   switch (action.type) {
     case TodoActionTypes.FETCH_TODOS_REQUEST:
       return {...state, isLoading: true};

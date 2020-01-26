@@ -3,7 +3,6 @@ export interface ITodoState {
   readonly todo: ITodoModel;
   readonly isLoading: boolean;
   readonly error: string;
-  readonly logo: string;
 }
 
 export type ApiResponse = Record<string, any>;
