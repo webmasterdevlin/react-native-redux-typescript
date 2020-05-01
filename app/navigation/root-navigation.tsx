@@ -4,14 +4,14 @@ import TodoList from '../todos/screens/TodoList';
 import FormLogin from '../auth/screens/FormLogin';
 import FoodList from '../foods/screens/FoodList';
 import FoodDetail from '../foods/screens/FoodDetail';
-import {NavigationNativeContainer} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
 export default function RootNavigation() {
   return (
-    <NavigationNativeContainer>
+    <NavigationContainer>
       <Stack.Navigator initialRouteName="formLogin">
         <Stack.Screen
           name="formLogin"
@@ -39,6 +39,6 @@ export default function RootNavigation() {
           options={{title: 'Food Detail'}}
         />
       </Stack.Navigator>
-    </NavigationNativeContainer>
+    </NavigationContainer>
   );
 }
