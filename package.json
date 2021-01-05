@@ -17,7 +17,7 @@
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.2.3",
     "@react-navigation/stack": "^5.2.18",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "formik": "^2.1.4",
     "react": "^16.13.1",
     "react-native": "0.62.2",
